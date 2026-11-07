@@ -2,47 +2,30 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Corn 的个人网站</title>
     <style>
-    /* 针对屏幕宽度小于 600 像素的设备（也就是手机）进行专属调整 */
-    @media (max-width: 600px) {
-        h1 {
-            font-size: 20px; /* 手机上标题别太大 */
-            padding: 0 10px;
-        }
-        
-        #corn {
-            width: 180px; /* 手机屏幕上图片缩小一点，防止超出边界 */
-        }
-    
-        .input-area {
-            flex-direction: column; /* 手机上把输入框和按钮竖着排，更好点 */
-            width: 80%;
-        }
-    
-        input, button {
-            width: 100%; /* 输入框和按钮撑满手机屏幕 */
-        }
-    
-        #msg {
-            font-size: 16px; /* 底部文字小一点 */
-        }
-    }
         body {
             background-color: #1a1a1a;
             color: #ffffff;
             font-family: "Microsoft YaHei", sans-serif;
+            display: flex; /* 左右分栏 */
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* 左侧主区域 */
+        .main-content {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
         }
-        
+
         h1 { font-size: 24px; margin-bottom: 10px; }
 
-        /* 闪烁提示词，引导点击 */
         .hint {
             font-size: 18px;
             color: #ff9900;
@@ -57,7 +40,6 @@
             50% { opacity: 0.3; }
         }
         
-        /* Corn 的图片 */
         #corn {
             width: 250px;
             cursor: pointer;
@@ -67,9 +49,7 @@
             margin-bottom: 20px;
         }
 
-        #corn:active {
-            transform: scale(0.95);
-        }
+        #corn:active { transform: scale(0.95); }
         
         .input-area {
             display: flex;
@@ -98,49 +78,91 @@
             font-weight: bold;
         }
 
-        button:hover { background-color: #00ccaa; }
-
         #msg {
             margin-top: 25px;
             font-size: 20px;
             color: #00ffcc;
             height: 30px;
             text-align: center;
-            max-width: 80%;
+        }
+
+        /* 右侧游戏边栏 */
+        .sidebar {
+            width: 250px;
+            background-color: #222;
+            border-left: 2px solid #333;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            color: #00ffcc;
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+        }
+
+        .game-btn {
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .game-btn:hover {
+            background: #00ffcc;
+            color: #1a1a1a;
+            transform: translateX(-5px);
+        }
+
+        /* 手机端适配：上下排列 */
+        @media (max-width: 700px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; border-left: none; border-top: 2px solid #333; }
         }
     </style>
 </head>
 <body>
 
-    <h1>这是我的个人网站</h1>
+    <!-- 左侧：Corn 互动区 -->
+    <div class="main-content">
+        <h1>这是我的个人网站</h1>
+        <div class="hint" onclick="showEmail()">点我！</div>
+        <img id="corn" src="corn.png" onclick="showEmail()" alt="Corn">
 
-    <!-- 引导点击的提示 -->
-    <div class="hint" onclick="showEmail()">点我！</div>
-
-    <!-- 角色图片，点击触发显示邮箱 -->
-    <img id="corn" src="corn.png" onclick="showEmail()" alt="Corn">
-
-    <!-- 输入框和按钮 -->
-    <div class="input-area">
-        <input type="text" id="userInput" placeholder="输入你的名字...">
-        <button onclick="checkName()">回答</button>
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="输入你的名字...">
+            <button onclick="checkName()">回答</button>
+        </div>
+        <div id="msg"></div>
     </div>
 
-    <!-- 显示回答的区域 -->
-    <div id="msg"></div>
+    <!-- 右侧：游戏大厅 -->
+    <div class="sidebar">
+        <h2>游戏大厅</h2>
+        <!-- 点击按钮触发 playGame 函数 -->
+        <button class="game-btn" onclick="playGame()">笨米先飞 (LÖVE)</button>
+        <button class="game-btn" onclick="alert('更多游戏开发中...')">敬请期待</button>
+    </div>
 
     <script>
-        // 点击图片或提示文字，显示邮箱
+        // 1. 显示邮箱
         function showEmail() {
             document.getElementById("msg").innerText = "我的邮箱是 3674462109@qq.com，你浏览了我的网站！";
         }
 
-        // 核心判定逻辑
+        // 2. 名字彩蛋逻辑
         function checkName() {
             let input = document.getElementById("userInput").value.trim();
             let msgBox = document.getElementById("msg");
-
-            // 把输入的内容转成大写，这样无论输入 nc、Nc 还是 NC 都能识别
             let upperInput = input.toUpperCase();
 
             if (upperInput === "NC") {
@@ -148,18 +170,22 @@
             } else if (input === "蓝田") {
                 msgBox.innerText = "把 NC 给你配了";
             } else if (input === "红米") {
-                msgBox.innerText = "把独裁给你配了";
+                msgBox.innerText = "独裁给你配了";
             } else if (input === "员工") {
                 msgBox.innerText = "叫阿曼给你配了";
             } else if (input === "") {
                 msgBox.innerText = "你是谁？";
             } else {
-                // 兜底回答
                 msgBox.innerText = "我不认识你哈。";
             }
-
-            // 清空输入框，方便下一次输入
             document.getElementById("userInput").value = "";
+        }
+
+        // 3. 点击游戏按钮跳转
+        function playGame() {
+            // 跳转到你上传的 love.js 游戏文件夹
+            // 注意：请确保你上传到 GitHub 的文件夹名字叫 "game-web"
+            window.location.href = "game-web/index.html"; 
         }
     </script>
 
