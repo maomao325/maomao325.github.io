@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Corn 的个人网站</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: "Microsoft YaHei", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        h1 { font-size: 24px; margin-bottom: 10px; }
+
+        /* 闪烁提示词，引导点击 */
+        .hint {
+            font-size: 18px;
+            color: #ff9900;
+            margin-bottom: 15px;
+            cursor: pointer;
+            animation: blink 1.2s infinite;
+            font-weight: bold;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* Corn 的图片 */
+        #corn {
+            width: 250px;
+            cursor: pointer;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: transform 0.1s;
+            margin-bottom: 20px;
+        }
+
+        #corn:active {
+            transform: scale(0.95);
+        }
+        
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 2px solid #00ffcc;
+            background: #333;
+            color: white;
+            outline: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #00ffcc;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover { background-color: #00ccaa; }
+
+        #msg {
+            margin-top: 25px;
+            font-size: 20px;
+            color: #00ffcc;
+            height: 30px;
+            text-align: center;
+            max-width: 80%;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>这是我的个人网站</h1>
+
+    <!-- 引导点击的提示 -->
+    <div class="hint" onclick="showEmail()">点我！</div>
+
+    <!-- 角色图片，点击触发显示邮箱 -->
+    <img id="corn" src="corn.png" onclick="showEmail()" alt="Corn">
+
+    <!-- 输入框和按钮 -->
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="输入你的名字...">
+        <button onclick="checkName()">回答</button>
+    </div>
+
+    <!-- 显示回答的区域 -->
+    <div id="msg"></div>
+
+    <script>
+        // 点击图片或提示文字，显示邮箱
+        function showEmail() {
+            document.getElementById("msg").innerText = "我的邮箱是 3674462109@qq.com，你浏览了我的网站！";
+        }
+
+        // 核心判定逻辑
+        function checkName() {
+            let input = document.getElementById("userInput").value.trim();
+            let msgBox = document.getElementById("msg");
+
+            // 把输入的内容转成大写，这样无论输入 nc、Nc 还是 NC 都能识别
+            let upperInput = input.toUpperCase();
+
+            if (upperInput === "NC") {
+                msgBox.innerText = "把你配了";
+            } else if (input === "蓝田") {
+                msgBox.innerText = "把 NC 给你配了";
+            } else if (input === "红米") {
+                msgBox.innerText = "把独裁给你配了";
+            } else if (input === "员工") {
+                msgBox.innerText = "叫阿曼给你配了";
+            } else if (input === "") {
+                msgBox.innerText = "你是谁？";
+            } else {
+                // 兜底回答
+                msgBox.innerText = "我不认识你哈。";
+            }
+
+            // 清空输入框，方便下一次输入
+            document.getElementById("userInput").value = "";
+        }
+    </script>
+
+</body>
+</html>
