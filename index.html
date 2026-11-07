@@ -4,6 +4,30 @@
     <meta charset="UTF-8">
     <title>Corn 的个人网站</title>
     <style>
+    /* 针对屏幕宽度小于 600 像素的设备（也就是手机）进行专属调整 */
+    @media (max-width: 600px) {
+        h1 {
+            font-size: 20px; /* 手机上标题别太大 */
+            padding: 0 10px;
+        }
+        
+        #corn {
+            width: 180px; /* 手机屏幕上图片缩小一点，防止超出边界 */
+        }
+    
+        .input-area {
+            flex-direction: column; /* 手机上把输入框和按钮竖着排，更好点 */
+            width: 80%;
+        }
+    
+        input, button {
+            width: 100%; /* 输入框和按钮撑满手机屏幕 */
+        }
+    
+        #msg {
+            font-size: 16px; /* 底部文字小一点 */
+        }
+    }
         body {
             background-color: #1a1a1a;
             color: #ffffff;
