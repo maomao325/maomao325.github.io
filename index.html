@@ -1,193 +1,69 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Corn 的个人网站</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>笨米先飞</title>
     <style>
-        body {
-            background-color: #1a1a1a;
-            color: #ffffff;
-            font-family: "Microsoft YaHei", sans-serif;
-            display: flex; /* 左右分栏 */
-            height: 100vh;
+        /* 强制去除所有边距，背景变黑，防止出现滚动条 */
+        html, body {
             margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
+            background-color: #000;
         }
-
-        /* 左侧主区域 */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        h1 { font-size: 24px; margin-bottom: 10px; }
-
-        .hint {
-            font-size: 18px;
-            color: #ff9900;
-            margin-bottom: 15px;
-            cursor: pointer;
-            animation: blink 1.2s infinite;
-            font-weight: bold;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-        
-        #corn {
-            width: 250px;
-            cursor: pointer;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            transition: transform 0.1s;
-            margin-bottom: 20px;
-        }
-
-        #corn:active { transform: scale(0.95); }
-        
-        .input-area {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        input {
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 2px solid #00ffcc;
-            background: #333;
-            color: white;
-            outline: none;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #00ffcc;
-            color: #1a1a1a;
+        /* 让游戏画布铺满整个屏幕 */
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        #msg {
-            margin-top: 25px;
-            font-size: 20px;
-            color: #00ffcc;
-            height: 30px;
-            text-align: center;
-        }
-
-        /* 右侧游戏边栏 */
-        .sidebar {
-            width: 250px;
-            background-color: #222;
-            border-left: 2px solid #333;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .sidebar h2 {
-            font-size: 18px;
-            color: #00ffcc;
-            text-align: center;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #444;
-            padding-bottom: 10px;
-        }
-
-        .game-btn {
-            background: #333;
-            color: white;
-            border: 1px solid #555;
-            padding: 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 16px;
-        }
-
-        .game-btn:hover {
-            background: #00ffcc;
-            color: #1a1a1a;
-            transform: translateX(-5px);
-        }
-
-        /* 手机端适配：上下排列 */
-        @media (max-width: 700px) {
-            body { flex-direction: column; }
-            .sidebar { width: 100%; border-left: none; border-top: 2px solid #333; }
+            outline: none;
         }
     </style>
 </head>
 <body>
 
-    <!-- 左侧：Corn 互动区 -->
-    <div class="main-content">
-        <h1>这是我的个人网站</h1>
-        <div class="hint" onclick="showEmail()">点我！</div>
-        <img id="corn" src="corn.png" onclick="showEmail()" alt="Corn">
+    <!-- 游戏只会渲染在这个画布里 -->
+    <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
 
-        <div class="input-area">
-            <input type="text" id="userInput" placeholder="输入你的名字...">
-            <button onclick="checkName()">回答</button>
-        </div>
-        <div id="msg"></div>
-    </div>
+    <!-- 引入 love.js 引擎 -->
+    <script src="love.js"></script>
 
-    <!-- 右侧：游戏大厅 -->
-    <div class="sidebar">
-        <h2>游戏大厅</h2>
-        <!-- 点击按钮触发 playGame 函数 -->
-        <button class="game-btn" onclick="playGame()">笨米先飞 (LÖVE)</button>
-        <button class="game-btn" onclick="alert('更多游戏开发中...')">敬请期待</button>
-    </div>
-
+    <!-- 启动逻辑 -->
     <script>
-        // 1. 显示邮箱
-        function showEmail() {
-            document.getElementById("msg").innerText = "我的邮箱是 3674462109@qq.com，你浏览了我的网站！";
-        }
+        // 保持你原本代码里的 Module 配置（如果原本有的话，原样贴在这里）
+        var Module = {
+            canvas: document.getElementById("canvas"),
+            arguments: [],
+        };
 
-        // 2. 名字彩蛋逻辑
-        function checkName() {
-            let input = document.getElementById("userInput").value.trim();
-            let msgBox = document.getElementById("msg");
-            let upperInput = input.toUpperCase();
-
-            if (upperInput === "NC") {
-                msgBox.innerText = "把你配了";
-            } else if (input === "蓝田") {
-                msgBox.innerText = "把 NC 给你配了";
-            } else if (input === "红米") {
-                msgBox.innerText = "独裁给你配了";
-            } else if (input === "员工") {
-                msgBox.innerText = "叫阿曼给你配了";
-            } else if (input === "") {
-                msgBox.innerText = "你是谁？";
-            } else {
-                msgBox.innerText = "我不认识你哈。";
-            }
-            document.getElementById("userInput").value = "";
-        }
-
-        // 3. 点击游戏按钮跳转
-        function playGame() {
-            // 跳转到你上传的 love.js 游戏文件夹
-            // 注意：请确保你上传到 GitHub 的文件夹名字叫 "game-web"
-            window.location.href = "game-web/index.html"; 
-        }
+        // 游戏加载完成后，强制全屏并调整画布大小
+        window.onload = function() {
+            // 监听窗口大小变化，让画布自适应屏幕
+            window.addEventListener('resize', function() {
+                var canvas = document.getElementById("canvas");
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+            // 初始化触发一次
+            window.dispatchEvent(new Event('resize'));
+        };
     </script>
 
+    <!-- ⚠️ 注意这里：默认加载的游戏数据包 -->
+    <!-- 如果你原本代码里，这里写的是 'game.data'，那就保持原样 -->
+    <script>
+        // 让 love.js 加载游戏数据
+        // 这行通常是在 love.js 内部处理的，如果原本模板里有 <script src="game.js"></script>，请保留原本的加载行
+    </script>
+    
+    <!-- 这一行是某些版本 love.js 启动游戏需要的，如果你原本文件有，就加上 -->
+    <script>
+        // 某些模板会通过这种形式启动，请对照你原本删掉的代码，看看有没有需要保留的
+        // 通常 love.js 会自动接管加载。
+    </script>
 </body>
 </html>
